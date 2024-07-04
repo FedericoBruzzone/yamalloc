@@ -43,7 +43,7 @@ CC = gcc
 # Compiler flags
 CFLAGS = -Wall -Wextra -Werror -Wpedantic -std=c99
 # Linker flags
-LDFLAGS = -lm
+LDFLAGS = -lm -lpthread
 
 # Compiler flags for debug
 CFLAGS_DEBUG = -g -O0 -DDEBUG
