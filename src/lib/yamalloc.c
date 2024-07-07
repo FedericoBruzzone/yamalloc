@@ -18,6 +18,34 @@
 #include <unistd.h>
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+// Simulate sbrk using VirtualAlloc
+void *sbrk(intptr_t increment)
+{
+	static void *heap_end = NULL;
+	void *prev_heap_end;
+
+	if (heap_end == NULL) {
+		heap_end = VirtualAlloc(
+		    NULL, CHUNK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		if (!heap_end)
+			return (void *)-1;
+	}
+
+	prev_heap_end = heap_end;
+
+	if (VirtualAlloc(heap_end, increment, MEM_COMMIT, PAGE_READWRITE) ==
+	    NULL) {
+		return (void *)-1;
+	}
+
+	heap_end = (char *)heap_end + increment;
+	return prev_heap_end;
+}
+#elif defined(__linux__) || defined(__APPLE__)
+#define sbrk sbrk
+#endif
+
 static BlockHeader *free_list = NULL;
 
 #ifdef YAMALLOC_THREAD_SAFE
@@ -85,6 +113,7 @@ void *yamalloc(size_t size)
  * This function allocates a block of memory of the given size and initializes
  * it to zero. The block is allocated from the heap.
  *
+ * @param[in] num Number of elements to allocate
  * @param[in] size Size (in bytes) of the block to allocate
  * @return void* Pointer to the allocated block of memory
  *
@@ -92,12 +121,13 @@ void *yamalloc(size_t size)
  * @warning Check the return value for NULL to ensure that the allocation was
  * successful
  */
-void *yacalloc(size_t size)
+void *yacalloc(size_t num, size_t size)
 {
-	void *ptr = yamalloc(size);
+	size_t total_size = num * size;
+	void *ptr = yamalloc(total_size);
 	if (ptr) {
 		uint8_t *p = (uint8_t *)ptr;
-		for (size_t i = 0; i < size; i++) {
+		for (size_t i = 0; i < total_size; i++) {
 			p[i] = 0;
 		}
 	}

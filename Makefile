@@ -10,6 +10,9 @@ SRC_DIR = src
 # Include directory
 INC_DIR = include
 
+# Test directory
+TEST_DIR = test
+
 # Build type. Values: debug, release
 BUILD = debug
 
@@ -38,6 +41,11 @@ CLI_CFILES = $(wildcard $(CLI_SRC_DIR)/*.c)
 CLI_HFILES = $(wildcard $(CLI_INC_DIR)/*.h)
 CLI_OFILES = $(patsubst $(CLI_SRC_DIR)/%.c, $(CLI_OUT_DIR)/%.o, $(CLI_CFILES))
 
+# Test directory
+TEST_OUT_DIR = $(OUT_DIR)/$(TEST_DIR)
+TEST_CFILES = $(wildcard $(TEST_DIR)/*.c)
+TEST_OFILES = $(patsubst $(TEST_DIR)/%.c, $(TEST_OUT_DIR)/%.o, $(TEST_CFILES))
+
 # Compiler
 CC = gcc
 # Compiler flags
@@ -56,6 +64,27 @@ ifeq ($(BUILD), debug)
 else ifeq ($(BUILD), release)
 	CFLAGS += $(CFLAGS_RELEASE)
 endif
+
+
+# ============================================================================
+# Compile and run the tests
+test: comp_lib comp_test link_test run_test
+
+comp_test: $(TEST_OFILES)
+link_test: $(TEST_OUT_DIR)/$(MAIN)
+run_test: $(TEST_OUT_DIR)/$(MAIN)
+	$(TEST_OUT_DIR)/$(MAIN)
+
+$(TEST_OUT_DIR):
+	mkdir -p $(TEST_OUT_DIR)
+
+$(TEST_OUT_DIR)/%.o: $(TEST_DIR)/%.c $(LIB_HFILES) | $(TEST_OUT_DIR)
+	$(CC) $(CFLAGS) -I$(LIB_INC_DIR) -I$(CLI_INC_DIR) -c $< -o $@
+
+$(TEST_OUT_DIR)/$(MAIN): $(TEST_OFILES) $(LIB_OFILES)
+	$(CC) $(CFLAGS) -o $@ $(TEST_OFILES) $(LIB_OFILES) $(LDFLAGS)
+
+
 
 # ============================================================================
 # Link with .o files

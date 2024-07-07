@@ -11,7 +11,7 @@ typedef struct BlockHeader {
 } BlockHeader;
 
 extern void *yamalloc(size_t size);
-extern void *yacalloc(size_t size);
+extern void *yacalloc(size_t num, size_t size);
 extern void *yarealloc(void *ptr, size_t size);
 extern void yafree(void *ptr);
 extern BlockHeader *request_space(BlockHeader *last, size_t size);
