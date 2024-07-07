@@ -1,7 +1,8 @@
-#include "yamalloc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define YAMALLOC_FREE_LIST
+#include "yamalloc.h"
 
 int main()
 {

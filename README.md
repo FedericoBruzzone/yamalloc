@@ -5,7 +5,13 @@
 
 `yamalloc` is a cross-platform thread-safe memory allocator written in C.
 
-In Linux it uses `brk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`.
+## Features
+
+`yamalloc` can be compiled with thread-safe support using the `YAMALLOC_THREAD_SAFE` flag (see `Makefile`).
+
+`yamalloc` can be compiled specifying the memory allocation strategy flag (see `Makefile`):
+
+- **Free List**: The free list is a list of free blocks of memory. It is a singly linked list where each node contains a pointer to the next free block of memory. In Linux it uses `sbrk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`.
 
 ## Usage
 

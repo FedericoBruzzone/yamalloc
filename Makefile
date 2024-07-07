@@ -1,3 +1,10 @@
+# Build type. Values: debug, release
+BUILD = debug
+# Memory allocation algorithm. Values: free_list, red_black_tree
+KIND = free_list
+# Thread safe. Values: 0, 1
+THREAD_SAFE = 0
+
 # Name of the final executable
 MAIN = main
 LIB = yamalloc
@@ -13,8 +20,9 @@ INC_DIR = include
 # Test directory
 TEST_DIR = test
 
-# Build type. Values: debug, release
-BUILD = debug
+# Define the flags for the different configurations
+THREAD_SAFE_DEF = -DYAMALLOC_THREAD_SAFE
+YAMALLOC_FREE_LIST_DEF = -DYAMALLOC_FREE_LIST
 
 # Target directory for the final executable
 TARGET_DIR = target
@@ -65,6 +73,15 @@ else ifeq ($(BUILD), release)
 	CFLAGS += $(CFLAGS_RELEASE)
 endif
 
+# Set the compiler flags according to the memory allocation algorithm
+ifeq ($(KIND), free_list)
+	CFLAGS += $(YAMALLOC_FREE_LIST_DEF)
+endif
+
+# Set the compiler flags according to the thread safe
+ifeq ($(THREAD_SAFE), 1)
+	CFLAGS += $(THREAD_SAFE_DEF)
+endif
 
 # ============================================================================
 # Compile and run the tests
