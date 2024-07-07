@@ -3,11 +3,17 @@
 
 # yamalloc - Yet Another Memory Allocator
 
-`yamalloc` is a cross-platform memory allocator library written in C.
+`yamalloc` is a cross-platform thread-safe memory allocator written in C.
 
 In Linux it uses `brk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`.
 
 ## Usage
+
+Run tests:
+```bash
+$ make clean && make test
+```
+Compile the library and link it to the executable:
 ```bash
 $ make clean && make && ./target/debug/src/cli/main
 ```
