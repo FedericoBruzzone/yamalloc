@@ -1,3 +1,8 @@
+/**
+ * @file yamalloc.c
+ * @brief Yet Another Malloc implementation
+ */
+
 #include "yamalloc.h"
 #include <pthread.h>
 #include <stdint.h>
@@ -12,11 +17,27 @@
 #endif
 
 static BlockHeader *free_list = NULL;
-static pthread_mutex_t malloc_lock = PTHREAD_MUTEX_INITIALIZER;
 
+#ifdef YAMALLOC_THREAD_SAFE
+static pthread_mutex_t malloc_lock = PTHREAD_MUTEX_INITIALIZER;
+#endif
+
+/**
+ * @brief Allocates a block of memory of the given size
+ *
+ * This function allocates a block of memory of the given size. The block is
+ * allocated from the heap and is not initialized.
+ *
+ * @note Remember to free the allocated block using yafree()
+ *
+ * @param[in] size Size (in bytes) of the block to allocate
+ * @return void* Pointer to the allocated block of memory
+ */
 void *yamalloc(size_t size)
 {
+#ifdef YAMALLOC_THREAD_SAFE
 	pthread_mutex_lock(&malloc_lock);
+#endif
 
 	BlockHeader *block;
 
@@ -24,7 +45,9 @@ void *yamalloc(size_t size)
 	if (!free_list) {
 		block = request_space(NULL, size);
 		if (!block) {
+#ifdef YAMALLOC_THREAD_SAFE
 			pthread_mutex_unlock(&malloc_lock);
+#endif
 			return NULL;
 		}
 		free_list = block;
@@ -36,13 +59,16 @@ void *yamalloc(size_t size)
 		} else {
 			block = request_space(last, size);
 			if (!block) {
+#ifdef YAMALLOC_THREAD_SAFE
 				pthread_mutex_unlock(&malloc_lock);
+#endif
 				return NULL;
 			}
 		}
 	}
-
+#ifdef YAMALLOC_THREAD_SAFE
 	pthread_mutex_unlock(&malloc_lock);
+#endif
 	return (void *)(block + 1);
 }
 
@@ -80,12 +106,15 @@ void yafree(void *ptr)
 	if (!ptr) {
 		return;
 	}
-
+#ifdef YAMALLOC_THREAD_SAFE
 	pthread_mutex_lock(&malloc_lock);
+#endif
 	// Consider using (BlockHeader *)((uint8_t *)ptr -
 	// sizeof(BlockHeader))
 	BlockHeader *block = (BlockHeader *)ptr - 1;
 	block->is_free = 1;
 	// TODO: coalesce free blocks
+#ifdef YAMALLOC_THREAD_SAFE
 	pthread_mutex_unlock(&malloc_lock);
+#endif
 }
