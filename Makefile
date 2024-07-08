@@ -56,8 +56,8 @@ TEST_OFILES = $(patsubst $(TEST_DIR)/%.c, $(TEST_OUT_DIR)/%.o, $(TEST_CFILES))
 
 # Compiler
 CC = gcc
-# Compiler flags
-CFLAGS = -Wall -Wextra -Werror -Wpedantic -std=c99
+# Compiler flags # -std=c99
+CFLAGS = -Wall -Wextra -Werror -Wpedantic
 # Linker flags
 LDFLAGS = -lm -lpthread
 

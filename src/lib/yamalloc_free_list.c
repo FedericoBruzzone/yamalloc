@@ -2,7 +2,6 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
-#define CHUNK_SIZE 4096
 #elif defined(__linux__) || defined(__APPLE__)
 // #include <sys/mman.h>
 #define __USE_XOPEN_EXTENDED

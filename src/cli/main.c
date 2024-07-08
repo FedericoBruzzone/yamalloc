@@ -5,20 +5,12 @@
 
 int main()
 {
-	// char *str = (char *)yamalloc(6);
-	// if (str == NULL) {
-	// 	printf("Failed to allocate memory\n");
-	// 	return 1;
-	// }
-	// strcpy(str, "Hello\0");
-	// printf("str: %s\n", str);
-	// printf("strlen: %lu\n", strlen(str));
-    char *str = (char *)yamalloc(14 * sizeof(char));
-    if (str == NULL) {
-        return 1;
-    }
-    strcpy(str, "Hello, World!\0");
+	char *str = (char *)yamalloc(14 * sizeof(char));
+	if (str == NULL) {
+		return 1;
+	}
+	strcpy(str, "Hello, World!\0");
 	printf("%s\n", str);
-    yafree(str);
-    return 0;
+	yafree(str);
+	return 0;
 }
