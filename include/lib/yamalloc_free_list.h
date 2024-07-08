@@ -10,14 +10,14 @@ typedef struct BlockHeaderFreeList {
 	uint8_t is_free;
 } BlockHeaderFreeList;
 
-extern void *yamalloc_free_list(size_t size);
-extern void *yacalloc_free_list(size_t num, size_t size);
-extern void *yarealloc_free_list(void *ptr, size_t size);
-extern void yafree_free_list(void *ptr);
-extern BlockHeaderFreeList *request_space_free_list(BlockHeaderFreeList *last,
+extern void *free_list_yamalloc(size_t size);
+extern void *free_list_yacalloc(size_t num, size_t size);
+extern void *free_list_yarealloc(void *ptr, size_t size);
+extern void free_list_yafree(void *ptr);
+extern BlockHeaderFreeList *free_list_request_space(BlockHeaderFreeList *last,
 						    size_t size);
 extern BlockHeaderFreeList *
-find_free_block_free_list(BlockHeaderFreeList **last, size_t size);
-extern void coalesce_free_blocks_free_list(void);
+free_list_find_free_block(BlockHeaderFreeList **last, size_t size);
+extern void free_list_coalesce_free_blocks(void);
 
 #endif // YAMALLOC_FREE_LIST_H

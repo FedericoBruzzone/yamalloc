@@ -57,7 +57,7 @@ static pthread_mutex_t free_lock = PTHREAD_MUTEX_INITIALIZER;
  * @warning Check the return value for NULL to ensure that the allocation was
  * successful
  */
-void *yamalloc_free_list(size_t size)
+void *free_list_yamalloc(size_t size)
 {
 #ifdef YAMALLOC_THREAD_SAFE
 	pthread_mutex_lock(&malloc_lock);
@@ -67,7 +67,7 @@ void *yamalloc_free_list(size_t size)
 
 	// First call
 	if (!free_list) {
-		block = request_space_free_list(NULL, size);
+		block = free_list_request_space(NULL, size);
 		if (!block) {
 #ifdef YAMALLOC_THREAD_SAFE
 			pthread_mutex_unlock(&malloc_lock);
@@ -77,11 +77,11 @@ void *yamalloc_free_list(size_t size)
 		free_list = block;
 	} else {
 		BlockHeaderFreeList *last = free_list;
-		block = find_free_block_free_list(&last, size);
+		block = free_list_find_free_block(&last, size);
 		if (block) {
 			block->is_free = 0;
 		} else {
-			block = request_space_free_list(last, size);
+			block = free_list_request_space(last, size);
 			if (!block) {
 #ifdef YAMALLOC_THREAD_SAFE
 				pthread_mutex_unlock(&malloc_lock);
@@ -111,10 +111,10 @@ void *yamalloc_free_list(size_t size)
  * @warning Check the return value for NULL to ensure that the allocation was
  * successful
  */
-void *yacalloc_free_list(size_t num, size_t size)
+void *free_list_yacalloc(size_t num, size_t size)
 {
 	size_t total_size = num * size;
-	void *ptr = yamalloc_free_list(total_size);
+	void *ptr = free_list_yamalloc(total_size);
 	if (ptr) {
 		uint8_t *p = (uint8_t *)ptr;
 		for (size_t i = 0; i < total_size; i++) {
@@ -140,22 +140,22 @@ void *yacalloc_free_list(size_t num, size_t size)
  * @warning Check the return value for NULL to ensure that the reallocation was
  * successful
  */
-void *yarealloc_free_list(void *ptr, size_t size)
+void *free_list_yarealloc(void *ptr, size_t size)
 {
 	if (!ptr) {
-		return yamalloc_free_list(size);
+		return free_list_yamalloc(size);
 	}
 	BlockHeaderFreeList *block = (BlockHeaderFreeList *)ptr - 1;
 	if (block->size >= size) {
 		return ptr;
 	}
-	void *new_ptr = yamalloc_free_list(size);
+	void *new_ptr = free_list_yamalloc(size);
 	if (new_ptr) {
 		uint8_t *p = (uint8_t *)new_ptr;
 		for (size_t i = 0; i < block->size; i++) {
 			p[i] = ((uint8_t *)ptr)[i];
 		}
-		yafree_free_list(ptr);
+		free_list_yafree(ptr);
 	}
 	return new_ptr;
 }
@@ -169,7 +169,7 @@ void *yarealloc_free_list(void *ptr, size_t size)
  * @param[in] ptr Pointer to the block of memory to free
  * @return void
  */
-void yafree_free_list(void *ptr)
+void free_list_yafree(void *ptr)
 {
 	if (!ptr) {
 		return;
@@ -180,7 +180,7 @@ void yafree_free_list(void *ptr)
 	// (BlockHeaderFreeList *)((uint8_t *)ptr - sizeof(BlockHeaderFreeList))
 	BlockHeaderFreeList *block = (BlockHeaderFreeList *)ptr - 1;
 	block->is_free = 1;
-	coalesce_free_blocks_free_list();
+	free_list_coalesce_free_blocks();
 #ifdef YAMALLOC_THREAD_SAFE
 	pthread_mutex_unlock(&free_lock);
 #endif
@@ -196,7 +196,7 @@ void yafree_free_list(void *ptr)
  * @param[in] size Size (in bytes) of the block to allocate
  * @return BlockHeaderFreeList* Pointer to the allocated block of memory
  */
-BlockHeaderFreeList *request_space_free_list(BlockHeaderFreeList *last,
+BlockHeaderFreeList *free_list_request_space(BlockHeaderFreeList *last,
 					     size_t size)
 {
 	BlockHeaderFreeList *block;
@@ -228,11 +228,11 @@ BlockHeaderFreeList *request_space_free_list(BlockHeaderFreeList *last,
  * @param[in] size Size (in bytes) of the block to allocate
  * @return BlockHeaderFreeList* Pointer to the free block of memory
  */
-BlockHeaderFreeList *find_free_block_free_list(BlockHeaderFreeList **last,
+BlockHeaderFreeList *free_list_find_free_block(BlockHeaderFreeList **last,
 					       size_t size)
 {
 	BlockHeaderFreeList *current = free_list;
-	while (current && (current->size >= size && current->is_free)) {
+	while (current && !(current->size >= size && current->is_free)) {
 		current = current->next;
 	}
 	if (current) {
@@ -250,7 +250,7 @@ BlockHeaderFreeList *find_free_block_free_list(BlockHeaderFreeList **last,
  *
  * @return void
  */
-void coalesce_free_blocks_free_list(void)
+void free_list_coalesce_free_blocks(void)
 {
 	BlockHeaderFreeList *current = free_list;
 	while (current) {

@@ -1,55 +1,46 @@
-/**
- * @file yamalloc.c
- * @brief Yet Another Malloc implementation
- *
- * @note YAMALLOC_THREAD_SAFE is a macro that enables thread safety. If you
- * are using this library in a multi-threaded environment, make sure to define
- * this macro.
- */
-
 #include "yamalloc.h"
 #ifdef YAMALLOC_FREE_LIST
 #include "yamalloc_free_list.h"
-#endif
+#endif // YAMALLOC_FREE_LIST
 
 void *yamalloc(size_t size)
 {
 #ifdef YAMALLOC_FREE_LIST
-	return yamalloc_free_list(size);
+	return free_list_yamalloc(size);
 #else
 	(void)size;
 	return NULL;
-#endif
+#endif // YAMALLOC_FREE_LIST
 }
 
 void *yacalloc(size_t num, size_t size)
 {
 #ifdef YAMALLOC_FREE_LIST
-	return yacalloc_free_list(num, size);
+	return free_list_yacalloc(num, size);
 #else
 	(void)num;
 	(void)size;
 	return NULL;
-#endif
+#endif // YAMALLOC_FREE_LIST
 }
 
 void *yarealloc(void *ptr, size_t size)
 {
 #ifdef YAMALLOC_FREE_LIST
-	return yarealloc_free_list(ptr, size);
+	return free_list_yarealloc(ptr, size);
 #else
 	(void)ptr;
 	(void)size;
 	return NULL;
-#endif
+#endif // YAMALLOC_FREE_LIST
 }
 
 void yafree(void *ptr)
 {
 #ifdef YAMALLOC_FREE_LIST
-	yafree_free_list(ptr);
+	free_list_yafree(ptr);
 #else
-    (void)ptr;
+	(void)ptr;
 	return;
-#endif
+#endif // YAMALLOC_FREE_LIST
 }
