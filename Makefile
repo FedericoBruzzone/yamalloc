@@ -114,13 +114,13 @@ link_cli: $(CLI_OUT_DIR)/$(MAIN)
 $(LIB_OUT_DIR):
 	mkdir -p $(LIB_OUT_DIR)
 
-$(LIB_OUT_DIR)%.o: $(LIB_SRC_DIR)/%.c $(LIB_HFILES) | $(LIB_OUT_DIR)
+$(LIB_OUT_DIR)/%.o: $(LIB_SRC_DIR)/%.c $(LIB_HFILES) | $(LIB_OUT_DIR)
 	$(CC) $(CFLAGS) -I$(LIB_INC_DIR) -c $< -o $@
 # =========== Compile CLI ==========
 $(CLI_OUT_DIR):
 	mkdir -p $(CLI_OUT_DIR)
 
-$(CLI_OUT_DIR)%.o: $(CLI_SRC_DIR)/%.c $(CLI_HFILES) | $(CLI_OUT_DIR)
+$(CLI_OUT_DIR)/%.o: $(CLI_SRC_DIR)/%.c $(CLI_HFILES) | $(CLI_OUT_DIR)
 	$(CC) $(CFLAGS) -I$(LIB_INC_DIR) -I$(CLI_INC_DIR) -c $< -o $@
 # =========== Link CLI ==========
 $(CLI_OUT_DIR)/$(MAIN): $(CLI_OFILES) $(LIB_OFILES)

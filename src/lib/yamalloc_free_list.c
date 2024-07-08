@@ -2,6 +2,7 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
+#define CHUNK_SIZE 4096
 #elif defined(__linux__) || defined(__APPLE__)
 // #include <sys/mman.h>
 #define __USE_XOPEN_EXTENDED
@@ -204,7 +205,7 @@ BlockHeaderFreeList *free_list_request_space(BlockHeaderFreeList *last,
 #if defined(__linux__) || defined(__APPLE__)
 	block = (BlockHeaderFreeList *)sbrk((intptr_t)total_size);
 #elif defined(_WIN32) || defined(_WIN64)
-	block = NULL;
+	block = (BlockHeaderFreeList *)sbrk((intptr_t)total_size);
 #endif
 	if (block == (void *)-1) {
 		return NULL;
