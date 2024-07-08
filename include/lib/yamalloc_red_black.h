@@ -6,14 +6,12 @@
 
 typedef enum Color { RED = 0, BLACK = 1 } Color;
 typedef struct BlockHeaderRedBlack {
-	size_t size;
-	struct BlockHeaderRedBlack *next;
-	uint8_t is_free;
-
-	struct BlockHeaderRedBlack *left;
-	struct BlockHeaderRedBlack *right;
-	struct BlockHeaderRedBlack *parent;
-	Color color;
+    size_t size;
+    struct BlockHeaderRedBlack *left;
+    struct BlockHeaderRedBlack *right;
+    struct BlockHeaderRedBlack *parent;
+    Color color;
+    uint8_t is_free;
 } BlockHeaderRedBlack;
 
 extern void *red_black_yamalloc(size_t size);

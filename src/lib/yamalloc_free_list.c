@@ -36,6 +36,7 @@ void *sbrk(intptr_t increment)
 #define sbrk sbrk
 #endif
 
+#define ALIGNMENT 8
 static BlockHeaderFreeList *free_list = NULL;
 
 #ifdef YAMALLOC_THREAD_SAFE
@@ -43,6 +44,19 @@ static BlockHeaderFreeList *free_list = NULL;
 static pthread_mutex_t malloc_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t free_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
+
+/**
+ * @brief Aligns the size to the nearest multiple of the alignment
+ *
+ * This function aligns the size to the nearest multiple of the alignment.
+ *
+ * @param[in, out] size Pointer to the size to align
+ * @return void
+ */
+static void align(size_t *size)
+{
+	*size = (*size + ALIGNMENT - 1) & ~(ALIGNMENT - 1);
+}
 
 /**
  * @brief Allocates a block of memory of the given size
@@ -63,6 +77,7 @@ void *free_list_yamalloc(size_t size)
 	pthread_mutex_lock(&malloc_lock);
 #endif
 
+	align(&size);
 	BlockHeaderFreeList *block;
 
 	// First call
@@ -200,6 +215,7 @@ BlockHeaderFreeList *free_list_request_space(BlockHeaderFreeList *last,
 					     size_t size)
 {
 	BlockHeaderFreeList *block;
+    align(&size);
 	size_t total_size = sizeof(BlockHeaderFreeList) + size;
 #if defined(__linux__) || defined(__APPLE__)
 	block = (BlockHeaderFreeList *)sbrk((intptr_t)total_size);
