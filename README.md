@@ -7,13 +7,36 @@
 
 ## Features
 
-`yamalloc` can be compiled with thread-safe support using the `YAMALLOC_THREAD_SAFE` flag (see `Makefile`).
+`yamalloc` can be compiled with thread-safe support using the `YAMALLOC_THREAD_SAFE` definition (see `Makefile`).
 
 `yamalloc` can be compiled specifying the memory allocation strategy flag (see `Makefile`):
 
-- **Free List**: The free list is a list of free blocks of memory. It is a singly linked list where each node contains a pointer to the next free block of memory. In Linux it uses `sbrk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`.
+- **Free List** (using `YAMALLOC_FREE_LIST` definition): The free list is a list of free blocks of memory. It is a singly linked list where each node contains a pointer to the next free block of memory. In Linux it uses `sbrk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`.
 
-## Usage
+- **Red-Black Tree** (using `YAMALLOC_RED_BLACK` definition): TODO
+
+## Example
+
+```c
+#include "yamalloc.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main()
+{
+    char *str = (char *)yamalloc(14 * sizeof(char));
+    if (str == NULL) {
+        return 1;
+    }
+    strcpy(str, "Hello, World!\0");
+    printf("%s\n", str);
+    yafree(str);
+    return 0;
+}
+```
+
+## Compilation
 
 Run tests:
 ```bash
