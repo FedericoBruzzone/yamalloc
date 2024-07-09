@@ -1,3 +1,4 @@
 -I./include/
 -I./include/lib
 -I./include/cli
+-DYAMALLOC_FREE_LIST

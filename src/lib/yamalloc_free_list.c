@@ -217,11 +217,7 @@ BlockHeaderFreeList *free_list_request_space(BlockHeaderFreeList *last,
 	BlockHeaderFreeList *block;
 	align(&size);
 	size_t total_size = sizeof(BlockHeaderFreeList) + size;
-#if defined(__linux__) || defined(__APPLE__)
 	block = (BlockHeaderFreeList *)sbrk((intptr_t)total_size);
-#elif defined(_WIN32) || defined(_WIN64)
-	block = (BlockHeaderFreeList *)sbrk((intptr_t)total_size);
-#endif
 	if (block == (void *)-1) {
 		return NULL;
 	}
