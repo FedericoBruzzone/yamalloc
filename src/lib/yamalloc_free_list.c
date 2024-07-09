@@ -241,6 +241,8 @@ BlockHeaderFreeList *free_list_request_space(BlockHeaderFreeList *last,
  *
  * This function finds a free block of memory of the given size in the free
  * list.
+ * The algorithm used is first-fit, i.e., the first block that is large enough
+ * to hold the requested size is returned.
  *
  * @param[in] last Pointer to the last block in the free list
  * @param[in] size Size (in bytes) of the block to allocate

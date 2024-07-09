@@ -47,13 +47,63 @@ static pthread_mutex_t free_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 /**
+ * @brief Aligns the size to the nearest multiple of the alignment
+ *
+ * This function aligns the size to the nearest multiple of the alignment.
+ *
+ * @param[in, out] size Pointer to the size to align
+ * @return void
+ */
+static void align(size_t *size)
+{
+	*size = (*size + ALIGNMENT - 1) & ~(ALIGNMENT - 1);
+}
+
+void *red_black_yamalloc(size_t size)
+{
+#ifdef YAMALLOC_THREAD_SAFE
+	pthread_mutex_lock(&malloc_lock);
+#endif
+	align(&size);
+	RedBlackNode *block;
+
+	if (!root) {
+		block = red_black_request_space(size);
+		if (!block) {
+#ifdef YAMALLOC_THREAD_SAFE
+			pthread_mutex_unlock(&malloc_lock);
+#endif
+			return NULL;
+		}
+		root = block;
+	} else {
+		block = red_black_find_free_block(root, size);
+		if (!block) {
+			block = red_black_request_space(size);
+			if (!block) {
+#ifdef YAMALLOC_THREAD_SAFE
+				pthread_mutex_unlock(&malloc_lock);
+#endif
+				return NULL;
+			}
+		}
+	}
+
+	block->is_free = 0;
+#ifdef YAMALLOC_THREAD_SAFE
+	pthread_mutex_unlock(&malloc_lock);
+#endif
+	return (void *)(block + 1);
+}
+
+/**
  * @brief Rotate the tree to the left
  *
  * This function rotates the tree to the left.
  *
  * @param[in] x The node to rotate
  */
-void left_rotate(RedBlackNode *x)
+void red_black_left_rotate(RedBlackNode *x)
 {
 	RedBlackNode *y = x->right;
 	x->right = y->left;
@@ -93,4 +143,3 @@ void red_black_right_rotate(RedBlackNode *x)
 	y->right = x;
 	x->parent = y;
 }
-
