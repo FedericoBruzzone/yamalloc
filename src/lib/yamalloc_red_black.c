@@ -77,7 +77,7 @@ void left_rotate(RedBlackNode *x)
  *
  * @param[in] x The node to rotate
  */
-void right_rotate(RedBlackNode *x)
+void red_black_right_rotate(RedBlackNode *x)
 {
 	RedBlackNode *y = x->left;
 	x->left = y->right;
@@ -93,3 +93,4 @@ void right_rotate(RedBlackNode *x)
 	y->right = x;
 	x->parent = y;
 }
+

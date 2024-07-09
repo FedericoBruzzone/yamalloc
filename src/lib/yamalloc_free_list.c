@@ -1,4 +1,5 @@
 #include "yamalloc_free_list.h"
+#include <string.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
@@ -192,6 +193,11 @@ void free_list_yafree(void *ptr)
 #ifdef YAMALLOC_THREAD_SAFE
 	pthread_mutex_lock(&free_lock);
 #endif
+	// Clear the memory
+	// for (size_t i = 0; i < ((BlockHeaderFreeList *)ptr - 1)->size; i++) {
+	// 	((uint8_t *)ptr)[i] = 0;
+	// }
+
 	// (BlockHeaderFreeList *)((uint8_t *)ptr - sizeof(BlockHeaderFreeList))
 	BlockHeaderFreeList *block = (BlockHeaderFreeList *)ptr - 1;
 	block->is_free = 1;
