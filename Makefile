@@ -1,7 +1,7 @@
 # Build type. Values: debug, release
 BUILD = debug
-# Memory allocation algorithm. Values: free_list, red_black_tree
-KIND = free_list
+# Memory allocation algorithm. Values: linked_list, free_list_ll, free_list_rbt
+KIND = linked_list
 # Thread safe. Values: 0, 1
 THREAD_SAFE = 0
 
@@ -22,7 +22,9 @@ TEST_DIR = test
 
 # Define the flags for the different configurations
 THREAD_SAFE_DEF = -DYAMALLOC_THREAD_SAFE
-YAMALLOC_FREE_LIST_DEF = -DYAMALLOC_FREE_LIST
+YAMALLOC_LINKED_LIST_DEF = -DYAMALLOC_LINKED_LIST
+YAMALLOC_FREE_LIST_LL_DEF = -DYAMALLOC_FREE_LIST_LL
+YAMALLOC_FREE_LIST_RBT_DEF = -DYAMALLOC_FREE_LIST_RBT
 
 # Target directory for the final executable
 TARGET_DIR = target
@@ -74,8 +76,12 @@ else ifeq ($(BUILD), release)
 endif
 
 # Set the compiler flags according to the memory allocation algorithm
-ifeq ($(KIND), free_list)
-	CFLAGS += $(YAMALLOC_FREE_LIST_DEF)
+ifeq ($(KIND), linked_list)
+	CFLAGS += $(YAMALLOC_LINKED_LIST_DEF)
+else ifeq ($(KIND), free_list_ll)
+	CFLAGS += $(YAMALLOC_FREE_LIST_LL_DEF)
+else ifeq ($(KIND), free_list_rbt)
+	CFLAGS += $(YAMALLOC_FREE_LIST_RBT_DEF)
 endif
 
 # Set the compiler flags according to the thread safe

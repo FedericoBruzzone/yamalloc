@@ -11,9 +11,12 @@
 
 `yamalloc` can be compiled specifying the memory allocation strategy flag (see `Makefile`):
 
-- **Free List** (using `YAMALLOC_FREE_LIST` definition): The free list is a list of free blocks of memory. It is a singly linked list where each node contains a pointer to the next free block of memory. In Linux it uses `sbrk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`.
+- **Linked List** (using `YAMALLOC_LINKED_LIST` definition): The linked list is a list of blocks of memory. It is a singly linked list where each node contains a pointer to the next block of memory. In Linux it uses `sbrk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`.
+The *Time complexity* to find a free block of memory is $O(n)$, where $n$ is the number of **blocks** in the list.
 
-- **Red-Black Tree** (using `YAMALLOC_RED_BLACK` definition): TODO
+- **Free List LL** (using `YAMALLOC_FREE_LIST_LL` definition): The free list is a list of free blocks of memory. It is a singly linked list where each node contains a pointer to the next free block of memory. In Linux it uses `sbrk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`. The *Time complexity* to find a free block of memory is $O(n)$, where $n$ is the number of **free blocks** in the list.
+
+- **Red-Black Tree** (using `YAMALLOC_FREE_LIST_RBT` definition): TODO
 
 ## Example
 
