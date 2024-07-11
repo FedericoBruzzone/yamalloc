@@ -2,6 +2,8 @@
 BUILD = debug
 # Memory allocation algorithm. Values: linked_list, free_list_ll, free_list_rbt
 KIND = linked_list
+# Free list find algorithm. Values: first, best
+KIND_FIND = first
 # Thread safe. Values: 0, 1
 THREAD_SAFE = 0
 
@@ -24,6 +26,8 @@ TEST_DIR = test
 THREAD_SAFE_DEF = -DYAMALLOC_THREAD_SAFE
 YAMALLOC_LINKED_LIST_DEF = -DYAMALLOC_LINKED_LIST
 YAMALLOC_FREE_LIST_LL_DEF = -DYAMALLOC_FREE_LIST_LL
+YAMALLOC_FREE_LIST_LL_FIND_FIRST_DEF = -DYAMALLOC_FREE_LIST_LL_FIND_FIRST
+YAMALLOC_FREE_LIST_LL_FIND_BEST_DEF = -DYAMALLOC_FREE_LIST_LL_FIND_BEST
 YAMALLOC_FREE_LIST_RBT_DEF = -DYAMALLOC_FREE_LIST_RBT
 
 # Target directory for the final executable
@@ -80,6 +84,11 @@ ifeq ($(KIND), linked_list)
 	CFLAGS += $(YAMALLOC_LINKED_LIST_DEF)
 else ifeq ($(KIND), free_list_ll)
 	CFLAGS += $(YAMALLOC_FREE_LIST_LL_DEF)
+	ifeq ($(KIND_FIND), first)
+		CFLAGS += $(YAMALLOC_FREE_LIST_LL_FIND_FIRST_DEF)
+	else ifeq ($(KIND_FIND), best)
+		CFLAGS += $(YAMALLOC_FREE_LIST_LL_FIND_BEST_DEF)
+	endif
 else ifeq ($(KIND), free_list_rbt)
 	CFLAGS += $(YAMALLOC_FREE_LIST_RBT_DEF)
 endif
