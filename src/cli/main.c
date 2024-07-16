@@ -11,7 +11,7 @@ int main()
 	}
 	strcpy(str, "Hello, World!\0");
 	printf("%s\n", str);
-	yafree(str);
+	// yafree(str);
     printf("%s\n", str);
 	// char *str1 = (char *)yamalloc(10 * sizeof(char));
  //    if (str1 == NULL) {

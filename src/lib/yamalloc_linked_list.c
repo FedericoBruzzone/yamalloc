@@ -68,7 +68,7 @@ static void align(size_t *size)
  * @param[in] size Size (in bytes) of the block to allocate
  * @return void* Pointer to the allocated block of memory
  *
- * @note Remember to free the allocated block using yalinked_list()
+ * @note Remember to free the allocated block using linked_list_yafree()
  * @warning Check the return value for NULL to ensure that the allocation was
  * successful
  */
@@ -123,7 +123,7 @@ void *linked_list_yamalloc(size_t size)
  * @param[in] size Size (in bytes) of the block to allocate
  * @return void* Pointer to the allocated block of memory
  *
- * @note Remember to free the allocated block using yafree_linked_list()
+ * @note Remember to free the allocated block using linked_list_yafree()
  * @warning Check the return value for NULL to ensure that the allocation was
  * successful
  */
@@ -152,7 +152,7 @@ void *linked_list_yacalloc(size_t num, size_t size)
  * @param[in] size New size (in bytes) of the block
  * @return void* Pointer to the reallocated block of memory
  *
- * @note Remember to free the reallocated block using yafree_linked_list()
+ * @note Remember to free the reallocated block using linked_list_yafree()
  * @warning Check the return value for NULL to ensure that the reallocation was
  * successful
  */

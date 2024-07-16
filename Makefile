@@ -1,7 +1,7 @@
 # Build type. Values: debug, release
 BUILD = debug
 # Memory allocation algorithm. Values: linked_list, free_list_ll, free_list_rbt
-KIND = linked_list
+KIND = free_list_ll
 # Free list find algorithm. Values: first, best
 KIND_FIND = first
 # Thread safe. Values: 0, 1
