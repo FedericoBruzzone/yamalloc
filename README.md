@@ -16,7 +16,7 @@ The *Time complexity* to find a free block of memory is $O(n)$, where $n$ is the
 
 - **Free List LL** (using `YAMALLOC_FREE_LIST_LL` definition): The free list is a list of free blocks of memory. It is a singly linked list where each node contains a pointer to the next free block of memory. In Linux it uses `sbrk` system call to request memory from the kernel, while in Windows it uses `NtAllocateVirtualMemory`. The *Time complexity* to find a free block of memory is $O(n)$, where $n$ is the number of **free blocks** in the list.
 
-- **Red-Black Tree** (using `YAMALLOC_FREE_LIST_RBT` definition): TODO
+- **Red-Black Tree** (using `YAMALLOC_FREE_LIST_RBT` definition): Future Work
 
 ## Example
 
@@ -73,8 +73,5 @@ Please review the license file provided in the repository for more information r
 
 ## Contact
 
-- Email:
-  - [federico.bruzzone.i@gmail.com]
-  - [federico.bruzzone@studenti.unimi.it]
-- GitHub:
-  - [FedericoBruzzone](https://github.com/FedericoBruzzone)
+If you have any questions, suggestions, or feedback, do not hesitate to [contact me](https://federicobruzzone.github.io/).
+
