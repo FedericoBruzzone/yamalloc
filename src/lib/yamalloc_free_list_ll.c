@@ -82,12 +82,15 @@ void *free_list_ll_yamalloc(size_t size)
 		size = sizeof(FreeListLLNode);
 	}
 
-    // Always enter in this scope cause free_list_ll is always NULL
 	if (!free_list_ll) {
 		node = free_list_ll_request_space(size);
 		if (!node) {
+#if defined(YAMALLOC_THREAD_SAFE)
+			pthread_mutex_unlock(&malloc_lock);
+#endif
 			return NULL;
 		}
+		free_list_ll = node;
 	} else {
 #if defined(YAMALLOC_FREE_LIST_LL_FIND_FIRST)
 		node = free_list_ll_find_first(&prev, size, &padding);
@@ -116,7 +119,7 @@ void *free_list_ll_yamalloc(size_t size)
 	free_list_ll_remove_node(prev, node);
 
 	header = (FreeListLLHeader *)((char *)node + alignment_padding);
-	header->size = size;
+	header->size = required_space;
 	header->padding = alignment_padding;
 
 #if defined(YAMALLOC_THREAD_SAFE)
@@ -174,7 +177,7 @@ void free_list_ll_yafree(void *ptr)
 
 	header = (FreeListLLHeader *)((char *)ptr - sizeof(FreeListLLHeader));
 	free_node = (FreeListLLNode *)header;
-	free_node->size = header->size + header->padding;
+	free_node->size = header->size - header->padding;
 	free_node->next = NULL;
 
 	while (node != NULL) {
@@ -184,6 +187,10 @@ void free_list_ll_yafree(void *ptr)
 		}
 		prev = node;
 		node = node->next;
+	}
+
+	if (!prev && free_node) {
+		free_list_ll = (void *)free_node;
 	}
 
 	free_list_ll_coalesce(prev, free_node);

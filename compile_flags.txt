@@ -1,4 +1,5 @@
 -I./include/
 -I./include/lib
 -I./include/cli
--DYAMALLOC_LINKED_LIST
+-DYAMALLOC_FREE_LIST_LL
+-DYAMALLOC_FREE_LIST_LL_FIND_FIRST
